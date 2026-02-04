@@ -10,7 +10,7 @@ export default function Page() {
   // const activeTab = searchParams.get('tab') || 'home';
 
   return (
-    <Suspense>
+    <Suspense fallback={<div className="p-8">Cargando navegación...</div>}>
       <div>
         <h1>Welcome to Next.js!</h1>
       </div>
