@@ -2,7 +2,7 @@
 'use client';
 
 import { SidebarButton } from "./SidebarButton";
-import { House, Gavel, LucideIcon } from "lucide-react";
+import { House, Gavel, Receipt, Lock, User, LogOut, LucideIcon } from "lucide-react";
 import { LayoutGroup } from "motion/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -20,7 +20,11 @@ export function Sidebar() {
 
   const navbarButtons: NavItem[] = [
     { btnName: "home", icon: House },
-    { btnName: "houseChores", icon: Gavel }
+    { btnName: "houseChores", icon: Gavel },
+    { btnName: "sharedBills", icon: Receipt },
+    { btnName: "choreLock", icon: Lock },
+    { btnName: "profile", icon: User },
+    { btnName: "selHome", icon: LogOut }
   ];
 
   const handleTabClick = (name: string) => {
@@ -28,11 +32,10 @@ export function Sidebar() {
   }
 
   return (
-      <aside className="sticky top-0 h-screen w-20 p-4 bg-zinc-800 text-white flex flex-col gap-10 min-h-screen">
-        <h1 className="text-2xl font-bold text-white">My Sidebar</h1>
+      <aside className="sticky top-0 h-screen w-20 p-4 bg-background text-white flex flex-col gap-10 min-h-screen">
           <nav>
             <LayoutGroup>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-15 mt-5">
                 {navbarButtons.map((button) => {
                   return <SidebarButton
                     key={button.btnName}
@@ -45,5 +48,5 @@ export function Sidebar() {
             </LayoutGroup>
           </nav>
       </aside>
-  );
+    );
 }
