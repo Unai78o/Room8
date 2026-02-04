@@ -1,11 +1,11 @@
 'use client';
 
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 
 export default function Page() {
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
 
-  const activeTab = searchParams.get('tab') || 'home';
+  // const activeTab = searchParams.get('tab') || 'home';
 
   return (
     <div>
