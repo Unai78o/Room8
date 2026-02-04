@@ -1,5 +1,7 @@
 'use client';
 
+import { Suspense } from "react";
+
 // import { useSearchParams } from "next/navigation";
 
 export default function Page() {
@@ -8,8 +10,10 @@ export default function Page() {
   // const activeTab = searchParams.get('tab') || 'home';
 
   return (
-    <div>
-      <h1>Welcome to Next.js!</h1>
-    </div>
+    <Suspense>
+      <div>
+        <h1>Welcome to Next.js!</h1>
+      </div>
+    </Suspense>
   );
 }
