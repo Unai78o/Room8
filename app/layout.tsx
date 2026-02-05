@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
-import { Suspense } from "react";
+import { Providers } from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,17 +25,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen`}
       >
-        <Suspense fallback={<div className="p-8">Cargando navegación...</div>}>
+        <Providers>
           <Sidebar />
-        </Suspense>
 
-        <main className='flex-1 overflow-y-auto p-4'>
-          {children}
-        </main>
+          <main className='flex-1 overflow-y-auto p-4'>
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );
