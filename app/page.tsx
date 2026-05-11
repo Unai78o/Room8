@@ -149,4 +149,164 @@ export default function RoommateOS() {
     }
   };
 
+  const selectHouse = async (house: any) => {
+    setIsTransitioning(true);
+    try {
+      if (!currentUser.houseId || currentUser.houseId !== house._id) {
+        await joinHouse(currentUser._id, house._id);
+        setCurrentUser({ ...currentUser, houseId: house._id });
+      }
+      setSelectedHouse(house);
+      const data = await getHouseData(house._id);
+      setTasks(data.tasks);
+      setBills(data.bills);
+      setRules(data.rules);
+      setHouseMembers(data.members);
+    } catch (error: any) {
+      showToast(error.message);
+    } finally {
+      setIsTransitioning(false);
+    }
+  };
+
+  const handleJoinHouse = async () => {
+    if (!inviteCode.trim() || !currentUser) return;
+    setIsTransitioning(true);
+    try {
+      await joinHouse(currentUser._id, inviteCode.trim());
+      const houses = await getUserHouses(currentUser._id);
+      setAvailableHouses(houses);
+      setIsJoinModalOpen(false);
+      setInviteCode("");
+      showToast("Conexión establecida");
+    } catch (err: any) {
+      showToast(err.message || "Error al unirse");
+    } finally {
+      setIsTransitioning(false);
+    }
+  };
+
+  const createNewHouse = async () => {
+    if (newHouseName.trim() && currentUser) {
+      setIsTransitioning(true);
+      try {
+        const house = await createHouse(newHouseName, newHouseAddress, currentUser._id);
+        setCurrentUser({ ...currentUser, houseId: house._id });
+        setSelectedHouse(house);
+        const data = await getHouseData(house._id);
+        setTasks(data.tasks);
+        setBills(data.bills);
+        setRules(data.rules);
+        setHouseMembers(data.members);
+
+        const houses = await getUserHouses(currentUser._id);
+        setAvailableHouses(houses);
+
+        setIsHouseModalOpen(false);
+        setNewHouseName("");
+        setNewHouseAddress("");
+        showToast("Nuevo Servidor Doméstico Creado");
+      } catch (err: any) {
+        showToast(err.message);
+      } finally {
+        setIsTransitioning(false);
+      }
+    }
+  };
+
+  const completeTask = async (taskId: string, xp: number) => {
+    try {
+      await dbCompleteTask(taskId, currentUser._id, xp);
+      setTasks(tasks.filter(t => t._id !== taskId));
+      setUserXP(prev => prev + xp);
+      setShowConfetti(true);
+      showToast("Misión cumplida. XP + " + xp);
+      setTimeout(() => setShowConfetti(false), 2000);
+    } catch (err: any) {
+      showToast(err.message);
+    }
+  };
+
+  const payBill = async () => {
+    if (billToPay) {
+      try {
+        await dbPayBill(billToPay);
+        setBills(bills.map(b => b._id === billToPay ? { ...b, paid: b.total } : b));
+        showToast("Deuda pagada");
+        setBillToPay(null);
+      } catch (err: any) {
+        showToast(err.message);
+      }
+    }
+  };
+
+  const addRule = async () => {
+    if (newRuleText.trim() && selectedHouse) {
+      try {
+        const ruleIdStr = `0${rules.length + 1}`;
+        const newRule = await createRule(selectedHouse._id, ruleIdStr, "NUEVA", newRuleText);
+        setRules([...rules, newRule]);
+        setNewRuleText("");
+        setIsRuleModalOpen(false);
+        showToast("Nueva norma creada");
+      } catch (err: any) {
+        showToast(err.message);
+      }
+    }
+  };
+
+  const addNewBill = async () => {
+    const total = parseFloat(newBillTotal);
+    if (newBillConcept.trim() && !isNaN(total) && total > 0 && selectedHouse) {
+      try {
+        const newBill = await createBill(selectedHouse._id, newBillConcept, total);
+        setBills([...bills, newBill]);
+        setNewBillConcept("");
+        setNewBillTotal("");
+        setIsBillModalOpen(false);
+        showToast("Nueva deuda creada");
+      } catch (err: any) {
+        showToast(err.message);
+      }
+    }
+  };
+
+  const addNewTask = async () => {
+    const xp = parseInt(newTaskXP);
+    if (newTaskTitle.trim() && !isNaN(xp) && xp > 0 && selectedHouse) {
+      try {
+        const newTask = await createTask(selectedHouse._id, newTaskTitle, xp);
+        setTasks([...tasks, newTask]);
+        setNewTaskTitle("");
+        setNewTaskXP("");
+        setIsTaskModalOpen(false);
+        showToast("Nueva tarea de convivencia creada");
+      } catch (err: any) {
+        showToast(err.message);
+      }
+    }
+  };
+
+  const removeRule = async (ruleId: string) => {
+    try {
+      await deleteRule(ruleId);
+      setRules(rules.filter(r => r._id !== ruleId));
+      showToast("Norma eliminada");
+    } catch (err: any) {
+      showToast(err.message);
+    }
+  };
+
+  const removeBill = async (billId: string) => {
+    try {
+      await deleteBill(billId);
+      setBills(bills.filter(b => b._id !== billId));
+      showToast("Deuda eliminada con éxito");
+    } catch (err: any) {
+      showToast(err.message);
+    }
+  };
+
+  const parallaxX = (mousePos.x / (typeof window !== 'undefined' ? window.innerWidth : 1000) - 0.5) * 20;
+  const parallaxY = (mousePos.y / (typeof window !== 'undefined' ? window.innerHeight : 1000) - 0.5) * 20;
 }
