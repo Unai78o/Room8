@@ -309,4 +309,156 @@ export default function RoommateOS() {
 
   const parallaxX = (mousePos.x / (typeof window !== 'undefined' ? window.innerWidth : 1000) - 0.5) * 20;
   const parallaxY = (mousePos.y / (typeof window !== 'undefined' ? window.innerHeight : 1000) - 0.5) * 20;
+
+  return (
+    <div className="relative min-h-screen w-full bg-[#141210] text-[#e5dcd3] font-sans overflow-hidden">
+      <div
+        className="pointer-events-none fixed inset-0 z-0 opacity-40"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, #1a1614 0%, #141210 100%)',
+          transform: `translate(${parallaxX * -0.5}px, ${parallaxY * -0.5}px)`
+        }}
+      >
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#ffb38a]/10 blur-[120px] rounded-full"
+          style={{ transform: `translate(${parallaxX}px, ${parallaxY}px)` }} />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-[#8C7B70]/10 blur-[150px] rounded-full"
+          style={{ transform: `translate(${parallaxX * -1.5}px, ${parallaxY * -1.5}px)` }} />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+      </div>
+
+      {showConfetti && (
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center overflow-hidden">
+          <div className="text-9xl animate-bounce">✨🏆✨</div>
+        </div>
+      )}
+
+      <div className={`relative z-10 w-full h-full min-h-screen flex transition-all duration-700 ${isTransitioning ? 'opacity-0 scale-95 blur-xl' : 'opacity-100 scale-100 blur-0'}`}>
+
+        {/* LOGIN */}
+        {!isLoggedIn && (
+          <div className="flex-1 flex items-center justify-center p-4">
+            <GlassCard className="w-full max-w-md p-10 flex flex-col items-center">
+              <div className="w-20 h-20 border border-[#ffb38a]/30 rotate-45 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(255,179,138,0.15)] bg-[#1a1614]/80">
+                <span className="-rotate-45 text-4xl font-serif italic text-[#ffb38a] ml-1">R</span>
+              </div>
+              <h1 className="text-2xl font-bold mb-2 tracking-widest text-[#e5dcd3]">ROOMMATE<span className="text-[#ffb38a]">OS</span></h1>
+              <p className="font-mono text-sm text-[#8C7B70] mb-8">v2.4.0 // INITIALIZATION</p>
+
+              <div className="flex bg-[#141210]/50 p-1 rounded-xl w-full mb-6 border border-white/5">
+                <button
+                  className={`flex-1 py-2 font-mono text-xs rounded-lg transition-all ${authMode === 'login' ? 'bg-[#ffb38a]/10 text-[#ffb38a]' : 'text-[#8C7B70] hover:text-[#e5dcd3]'}`}
+                  onClick={() => setAuthMode('login')}
+                >
+                  LOGIN
+                </button>
+                <button
+                  className={`flex-1 py-2 font-mono text-xs rounded-lg transition-all ${authMode === 'register' ? 'bg-[#ffb38a]/10 text-[#ffb38a]' : 'text-[#8C7B70] hover:text-[#e5dcd3]'}`}
+                  onClick={() => setAuthMode('register')}
+                >
+                  SIGN UP
+                </button>
+              </div>
+
+              <form onSubmit={handleAuth} className="w-full flex flex-col gap-4">
+                {authMode === 'register' && (
+                  <input
+                    type="text"
+                    placeholder="Alias"
+                    required
+                    value={alias} onChange={e => setAlias(e.target.value)}
+                    className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+                  />
+                )}
+                <input
+                  type="email"
+                  placeholder="Email"
+                  required
+                  value={email} onChange={e => setEmail(e.target.value)}
+                  className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  required
+                  value={password} onChange={e => setPassword(e.target.value)}
+                  className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+                />
+
+                <div className="mt-4 flex flex-col gap-3">
+                  <button type="submit" className="w-full bg-[#ffb38a] text-[#141210] font-bold py-3 rounded-xl hover:bg-[#ffb38a]/90 hover:shadow-[0_0_20px_rgba(255,179,138,0.3)] transition-all uppercase tracking-wider text-sm">
+                    Inicializar
+                  </button>
+                </div>
+              </form>
+            </GlassCard>
+          </div>
+        )}
+      </div>
+
+      {/* HOUSE SELECTION */}
+        {isLoggedIn && !selectedHouse && (
+          <div className="flex-1 flex flex-col items-center justify-center p-4">
+            <SectionTitle title={`Hola, ${currentUser?.alias || 'Viajero'}`} subtitle="Selecciona Servidor Doméstico" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl mt-8">
+              {availableHouses.map(house => (
+                <GlassCard key={house._id} className="p-6 flex flex-col items-center text-center group">
+                  <div className="w-16 h-16 rounded-full bg-[#141210] border border-white/10 flex items-center justify-center mb-4 group-hover:border-[#ffb38a]/50 transition-colors">
+                    <Home className="text-[#ffb38a]" size={28} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-1">{house.name}</h3>
+                  <p className="text-[#8C7B70] text-xs font-mono mb-6">{house.address}</p>
+
+                  <div className="flex -space-x-2 mb-6">
+                    <div className="w-8 h-8 rounded-full bg-[#ffb38a]/20 border-2 border-[#1a1614] flex items-center justify-center text-[10px] font-bold text-[#ffb38a]">TÚ</div>
+                    {house.members?.slice(0, 3).map((m: any, idx: number) => (
+                      <div key={idx} className="w-8 h-8 rounded-full bg-gray-700 border-2 border-[#1a1614] flex items-center justify-center text-[10px] font-bold">M</div>
+                    ))}
+                  </div>
+
+                  <button onClick={() => selectHouse(house)} className="w-full py-2 bg-white/5 hover:bg-[#ffb38a]/10 text-[#e5dcd3] hover:text-[#ffb38a] border border-white/10 hover:border-[#ffb38a]/30 rounded-lg transition-all text-sm font-mono tracking-widest">
+                    CONECTAR
+                  </button>
+                </GlassCard>
+              ))}
+
+              <div className="flex flex-col gap-4">
+                <GlassCard
+                  className="p-6 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-white/5 transition-all border-dashed h-full"
+                  onClick={() => setIsHouseModalOpen(true)}
+                >
+                  <div className="w-16 h-16 rounded-full bg-[#141210] border border-white/10 flex items-center justify-center mb-4 group-hover:border-[#ffb38a]/50 transition-colors">
+                    <span className="text-[#ffb38a] text-3xl">+</span>
+                  </div>
+                  <h3 className="font-bold text-[#e5dcd3] mb-2 font-mono text-sm">CREAR NUEVO SERVIDOR</h3>
+                </GlassCard>
+
+                <GlassCard
+                  className="p-6 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-white/5 transition-all border-dashed h-full"
+                  onClick={() => setIsJoinModalOpen(true)}
+                >
+                  <div className="w-16 h-16 rounded-full bg-[#141210] border border-white/10 flex items-center justify-center mb-4 group-hover:border-[#ffb38a]/50 transition-colors">
+                    <Zap className="text-[#ffb38a]" size={28} />
+                  </div>
+                  <h3 className="font-bold text-[#e5dcd3] mb-2 font-mono text-sm">UNIRSE CON CÓDIGO</h3>
+                </GlassCard>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setIsLoggedIn(false);
+                setCurrentUser(null);
+                setSelectedHouse(null);
+                localStorage.removeItem('roommate_user_id');
+              }}
+              className="mt-12 text-[#8C7B70] hover:text-red-400 font-mono text-sm border-b border-transparent hover:border-red-400/30 transition-all pb-1"
+            >
+              [ CERRAR SESIÓN ]
+            </button>
+          </div>
+        )}
+
+    </div>
+  );
 }
