@@ -116,11 +116,11 @@ export async function completeTask(taskId: string, userId: string, xpReward: num
   return JSON.parse(JSON.stringify(user));
 }
 
-export async function payBill(billId: string) {
+export async function payBill(billId: string, amount: number) {
   await connectToDatabase();
   const bill = await Bill.findById(billId);
   if (bill) {
-    bill.paid = bill.total;
+    bill.paid = Math.min(bill.total, bill.paid + amount);
     await bill.save();
   }
   return JSON.parse(JSON.stringify(bill));

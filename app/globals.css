@@ -24,3 +24,9 @@ body {
 html, body {
   transition: background-color 0.5s ease !important;
 }
+
+@layer base {
+  button {
+    cursor: pointer;
+  }
+}

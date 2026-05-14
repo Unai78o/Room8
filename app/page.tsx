@@ -230,9 +230,16 @@ export default function RoommateOS() {
   const payBill = async () => {
     if (billToPay) {
       try {
-        await dbPayBill(billToPay);
-        setBills(bills.map(b => b._id === billToPay ? { ...b, paid: b.total } : b));
-        showToast("Deuda pagada");
+        const bill = bills.find(b => b._id === billToPay);
+        if (!bill) return;
+
+        const memberCount = houseMembers.length || 1;
+        const amountToPay = bill.total / memberCount;
+
+        await dbPayBill(billToPay, amountToPay);
+        
+        setBills(bills.map(b => b._id === billToPay ? { ...b, paid: Math.min(b.total, b.paid + amountToPay) } : b));
+        showToast("Cuota transferida");
         setBillToPay(null);
       } catch (err: any) {
         showToast(err.message);
@@ -803,7 +810,7 @@ export default function RoommateOS() {
         <div className="flex flex-col gap-4">
           <input
             type="text"
-            placeholder="Concepto (Ej: Enlace Orbital)"
+            placeholder="Concepto (Ej: Gastos Luz)"
             value={newBillConcept}
             onChange={(e) => setNewBillConcept(e.target.value)}
             className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
