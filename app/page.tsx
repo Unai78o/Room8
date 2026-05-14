@@ -471,7 +471,7 @@ export default function RoommateOS() {
               {activeTab === 'dashboard' && (
                 <div className="max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="flex justify-between items-end mb-10">
-                    <SectionTitle title="Módulo Principal" subtitle="Resumen de Estado" />
+                    <SectionTitle title="Página Principal" subtitle="Resumen de Estado" />
                     <div className="hidden md:flex items-center gap-3 bg-[#1a1614]/60 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
                       <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                       <span className="font-mono text-xs text-[#8C7B70]">SERVER: ONLINE</span>
@@ -480,7 +480,7 @@ export default function RoommateOS() {
 
                   <GlassCard className="p-8 mb-8 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-[#ffb38a]/5 blur-[80px] group-hover:bg-[#ffb38a]/10 transition-colors" />
-                    <h3 className="font-mono text-[#8C7B70] tracking-widest text-sm mb-2">SISTEMA CORE</h3>
+                    <h3 className="font-mono text-[#8C7B70] tracking-widest text-sm mb-2">SISTEMA</h3>
                     <h2 className="text-4xl font-bold text-[#ffb38a] mb-6 tracking-tight">ESTADO ÓPTIMO</h2>
 
                     <div className="mb-8">
@@ -500,10 +500,7 @@ export default function RoommateOS() {
 
                     <div className="flex gap-4">
                       <button onClick={() => setActiveTab('chorelock')} className="bg-[#ffb38a] text-[#141210] px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:shadow-[0_0_15px_rgba(255,179,138,0.4)] transition-all">
-                        MISIONES ACTIVAS
-                      </button>
-                      <button className="bg-transparent border border-white/20 text-[#e5dcd3] px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:bg-white/5 transition-all">
-                        LOGS
+                        TAREAS PENDIENTES
                       </button>
                     </div>
                   </GlassCard>
@@ -511,7 +508,7 @@ export default function RoommateOS() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <GlassCard className="p-6 md:col-span-2">
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-sans font-bold text-xl">Quests & Tesorería</h3>
+                        <h3 className="font-sans font-bold text-xl">Tareas & Facturas</h3>
                         <Activity className="text-[#8C7B70]" size={20} />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
@@ -653,7 +650,7 @@ export default function RoommateOS() {
                     onClick={() => setIsBillModalOpen(true)}
                     className="w-full py-4 mt-6 border border-dashed border-[#8C7B70]/50 rounded-[2rem] text-[#8C7B70] hover:text-[#ffb38a] hover:border-[#ffb38a]/50 hover:bg-[#ffb38a]/5 transition-all font-mono tracking-widest text-sm flex items-center justify-center gap-2"
                   >
-                    + NUEVA CUOTA
+                    + NUEVO GASTO
                   </button>
                 </div>
               )}
@@ -735,7 +732,7 @@ export default function RoommateOS() {
 
       {/* MODALS */}
       <GlassModal isOpen={isRuleModalOpen} onClose={() => setIsRuleModalOpen(false)}>
-        <h3 className="text-xl font-bold mb-2">Nueva Directiva</h3>
+        <h3 className="text-xl font-bold mb-2">Nueva Norma</h3>
         <p className="text-sm text-[#8C7B70] mb-6">Propón una nueva regla para el servidor doméstico.</p>
         <textarea
           value={newRuleText}
@@ -801,7 +798,7 @@ export default function RoommateOS() {
       </GlassModal>
 
       <GlassModal isOpen={isBillModalOpen} onClose={() => setIsBillModalOpen(false)}>
-        <h3 className="text-xl font-bold mb-2">Nueva Cuota Conjunta</h3>
+        <h3 className="text-xl font-bold mb-2">Nueva Gasto Conjunto</h3>
         <p className="text-sm text-[#8C7B70] mb-6">Añade un nuevo gasto para repartir.</p>
         <div className="flex flex-col gap-4">
           <input
