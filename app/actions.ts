@@ -6,20 +6,28 @@ import House from '@/models/House';
 import Task from '@/models/Task';
 import Bill from '@/models/Bill';
 import Rule from '@/models/Rule';
+import bcrypt from 'bcryptjs';
 
-export async function registerUser(alias: string, email: string, passwordHash: string) {
+export async function registerUser(alias: string, email: string, passwordPlain: string) {
   await connectToDatabase();
   const existing = await User.findOne({ email });
   if (existing) throw new Error('El email ya existe');
+  
+  const salt = await bcrypt.genSalt(10);
+  const passwordHash = await bcrypt.hash(passwordPlain, salt);
   
   const user = await User.create({ alias, email, passwordHash, xp: 0 });
   return JSON.parse(JSON.stringify(user));
 }
 
-export async function loginUser(email: string, passwordHash: string) {
+export async function loginUser(email: string, passwordPlain: string) {
   await connectToDatabase();
-  const user = await User.findOne({ email, passwordHash });
+  const user = await User.findOne({ email });
   if (!user) throw new Error('Credenciales incorrectas');
+
+  const isMatch = await bcrypt.compare(passwordPlain, user.passwordHash);
+  if (!isMatch) throw new Error('Credenciales incorrectas');
+
   return JSON.parse(JSON.stringify(user));
 }
 
