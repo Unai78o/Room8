@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { FrostedCard as GlassCard } from '@/components/FrostedCard';
-import { Home, User, Check, Ghost, Zap, Activity, ChevronRight, Trash2 } from 'lucide-react';
+import { Home, User, Check, Flame, Ghost, Zap, Activity, ChevronRight, Trash2 } from 'lucide-react';
 import {
   registerUser, loginUser, getUserHouses, joinHouse, createHouse,
   getHouseData, createRule, completeTask as dbCompleteTask, payBill as dbPayBill,
@@ -332,6 +332,8 @@ export default function RoommateOS() {
         </div>
       )}
 
+
+
       <div className={`relative z-10 w-full h-full min-h-screen flex transition-all duration-700 ${isTransitioning ? 'opacity-0 scale-95 blur-xl' : 'opacity-100 scale-100 blur-0'}`}>
 
         {/* LOGIN */}
@@ -393,9 +395,8 @@ export default function RoommateOS() {
             </GlassCard>
           </div>
         )}
-      </div>
 
-      {/* HOUSE SELECTION */}
+        {/* HOUSE SELECTION */}
         {isLoggedIn && !selectedHouse && (
           <div className="flex-1 flex flex-col items-center justify-center p-4">
             <SectionTitle title={`Hola, ${currentUser?.alias || 'Viajero'}`} subtitle="Selecciona Servidor Doméstico" />
@@ -459,6 +460,398 @@ export default function RoommateOS() {
           </div>
         )}
 
+        {/* MAIN APP */}
+        {isLoggedIn && selectedHouse && (
+          <div className="flex flex-1 w-full relative">
+            <Sidebar activeTab={activeTab} onTabChange={setActiveTab} onBackToSelection={() => setSelectedHouse(null)} />
+
+            <main className="flex-1 p-8 md:p-12 overflow-y-auto max-h-screen custom-scrollbar">
+
+              {/* DASHBOARD */}
+              {activeTab === 'dashboard' && (
+                <div className="max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="flex justify-between items-end mb-10">
+                    <SectionTitle title="Módulo Principal" subtitle="Resumen de Estado" />
+                    <div className="hidden md:flex items-center gap-3 bg-[#1a1614]/60 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
+                      <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                      <span className="font-mono text-xs text-[#8C7B70]">SERVER: ONLINE</span>
+                    </div>
+                  </div>
+
+                  <GlassCard className="p-8 mb-8 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#ffb38a]/5 blur-[80px] group-hover:bg-[#ffb38a]/10 transition-colors" />
+                    <h3 className="font-mono text-[#8C7B70] tracking-widest text-sm mb-2">SISTEMA CORE</h3>
+                    <h2 className="text-4xl font-bold text-[#ffb38a] mb-6 tracking-tight">ESTADO ÓPTIMO</h2>
+
+                    <div className="mb-8">
+                      <div className="flex justify-between font-mono text-xs mb-2">
+                        <span>Sincronización de Convivencia</span>
+                        <span className="text-[#ffb38a]">98%</span>
+                      </div>
+                      <div className="w-full h-1 bg-[#141210] rounded-full overflow-hidden">
+                        <div className="h-full bg-[#ffb38a] w-[98%] shadow-[0_0_10px_#ffb38a]" />
+                      </div>
+                    </div>
+
+                    <div className="mb-8 p-4 bg-[#141210]/50 rounded-xl border border-white/5 inline-block">
+                      <p className="font-mono text-[10px] text-[#8C7B70] mb-1">CÓDIGO DE INVITACIÓN (CÓPIALO PARA INVITAR)</p>
+                      <p className="font-mono text-sm text-[#ffb38a] select-all cursor-copy">{selectedHouse?._id}</p>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <button onClick={() => setActiveTab('chorelock')} className="bg-[#ffb38a] text-[#141210] px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:shadow-[0_0_15px_rgba(255,179,138,0.4)] transition-all">
+                        MISIONES ACTIVAS
+                      </button>
+                      <button className="bg-transparent border border-white/20 text-[#e5dcd3] px-6 py-2 rounded-lg font-bold text-sm tracking-wider hover:bg-white/5 transition-all">
+                        LOGS
+                      </button>
+                    </div>
+                  </GlassCard>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <GlassCard className="p-6 md:col-span-2">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="font-sans font-bold text-xl">Quests & Tesorería</h3>
+                        <Activity className="text-[#8C7B70]" size={20} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-[#141210]/50 p-4 rounded-xl border border-white/5">
+                          <p className="font-mono text-[#8C7B70] text-xs mb-1">DEUDA ACTIVA</p>
+                          <p className="text-2xl font-bold font-mono text-[#e5dcd3]">
+                            {bills.reduce((acc, b) => acc + (b.total - b.paid), 0)}<span className="text-[#ffb38a]">€</span>
+                          </p>
+                        </div>
+                        <div className="bg-[#141210]/50 p-4 rounded-xl border border-white/5">
+                          <p className="font-mono text-[#8C7B70] text-xs mb-1">PENDIENTES</p>
+                          <p className="text-2xl font-bold font-mono text-[#e5dcd3]">
+                            {tasks.length}<span className="text-sm text-[#8C7B70] ml-2">TAREAS</span>
+                          </p>
+                        </div>
+                      </div>
+                    </GlassCard>
+
+                    <GlassCard className="p-6 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-sans font-bold text-xl mb-4">Leaderboard</h3>
+                        <div className="flex flex-col gap-3">
+                          <div className="flex justify-between items-center bg-[#ffb38a]/10 border border-[#ffb38a]/30 p-2 rounded-lg">
+                            <span className="text-sm font-bold text-[#ffb38a]">{currentUser?.alias || 'TÚ'}</span>
+                            <span className="font-mono text-xs">{userXP} XP</span>
+                          </div>
+                          {houseMembers.filter(m => m._id !== currentUser?._id).map((member: any) => (
+                            <div key={member._id} className="flex justify-between items-center p-2">
+                              <span className="text-sm text-[#8C7B70]">{member.alias}</span>
+                              <span className="font-mono text-xs text-[#8C7B70]">{member.xp} XP</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="mt-6 flex items-center justify-center gap-2 font-mono text-xs text-[#ffb38a] bg-[#141210]/50 p-2 rounded-lg border border-white/5">
+                        <Flame size={14} /> RACHA: 12 DÍAS
+                      </div>
+                    </GlassCard>
+                  </div>
+                </div>
+              )}
+
+              {/* HOUSE RULES */}
+              {activeTab === 'houserules' && (
+                <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <SectionTitle title="Normas" subtitle="Normas de Convivencia" />
+
+                  <div className="flex flex-col gap-4 mb-8">
+                    {rules.map(rule => (
+                      <GlassCard key={rule._id} className="p-6 flex items-start gap-6">
+                        <div className="font-mono text-4xl text-[#141210] font-black text-stroke tracking-tighter" style={{ WebkitTextStroke: '1px #ffb38a', color: 'transparent' }}>
+                          {rule.ruleId}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="bg-[#ffb38a]/10 text-[#ffb38a] font-mono text-[10px] px-2 py-1 rounded border border-[#ffb38a]/20 uppercase tracking-widest">
+                              {rule.category}
+                            </span>
+                            <span className="font-mono text-xs text-[#8C7B70]">
+                              VOTOS: {rule.votes}/{rule.maxVotes}
+                            </span>
+                          </div>
+                          <p className="text-[#e5dcd3]">{rule.description}</p>
+                        </div>
+                        <button
+                          onClick={() => removeRule(rule._id)}
+                          className="bg-transparent border border-red-500/20 text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-all self-center"
+                          title="Eliminar directiva"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </GlassCard>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setIsRuleModalOpen(true)}
+                    className="w-full py-4 border border-dashed border-[#8C7B70]/50 rounded-[2rem] text-[#8C7B70] hover:text-[#ffb38a] hover:border-[#ffb38a]/50 hover:bg-[#ffb38a]/5 transition-all font-mono tracking-widest text-sm flex items-center justify-center gap-2"
+                  >
+                    + NUEVA DIRECTIVA
+                  </button>
+                </div>
+              )}
+
+              {/* SHARED BILLS */}
+              {activeTab === 'sharedbills' && (
+                <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <SectionTitle title="Facturas" subtitle="Facturas compartidas" />
+
+                  <div className="flex flex-col gap-4">
+                    {bills.map(bill => {
+                      const isPaid = bill.paid >= bill.total;
+                      const percentage = (bill.paid / bill.total) * 100;
+                      return (
+                        <GlassCard key={bill._id} className="p-6">
+                          <div className="flex justify-between items-center mb-4">
+                            <h3 className="font-bold text-lg">{bill.concept}</h3>
+                            {isPaid ? (
+                              <span className="bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1 rounded font-mono text-xs tracking-wider">
+                                PAGADO
+                              </span>
+                            ) : (
+                              <span className="font-mono text-[#ffb38a]">
+                                {bill.paid} / {bill.total} €
+                              </span>
+                            )}
+                            <button
+                              onClick={() => removeBill(bill._id)}
+                              className="ml-4 bg-transparent border border-red-500/20 text-red-400 hover:bg-red-500/10 p-1.5 rounded-lg transition-all"
+                              title="Eliminar cuota"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+
+                          <div className="w-full h-2 bg-[#141210] rounded-full overflow-hidden mb-6">
+                            <div
+                              className={`h-full transition-all duration-1000 ${isPaid ? 'bg-green-400 shadow-[0_0_10px_#4ade80]' : 'bg-[#ffb38a] shadow-[0_0_10px_#ffb38a]'}`}
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+
+                          {!isPaid && (
+                            <div className="flex justify-end">
+                              <button
+                                onClick={() => setBillToPay(bill._id)}
+                                className="bg-[#141210] border border-white/10 hover:border-[#ffb38a] text-[#e5dcd3] hover:text-[#ffb38a] px-4 py-2 rounded-lg text-sm font-mono transition-all flex items-center gap-2"
+                              >
+                                TRANSFERIR CUOTA <ChevronRight size={14} />
+                              </button>
+                            </div>
+                          )}
+                        </GlassCard>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => setIsBillModalOpen(true)}
+                    className="w-full py-4 mt-6 border border-dashed border-[#8C7B70]/50 rounded-[2rem] text-[#8C7B70] hover:text-[#ffb38a] hover:border-[#ffb38a]/50 hover:bg-[#ffb38a]/5 transition-all font-mono tracking-widest text-sm flex items-center justify-center gap-2"
+                  >
+                    + NUEVA CUOTA
+                  </button>
+                </div>
+              )}
+
+              {/* TASKS */}
+              {activeTab === 'chorelock' && (
+                <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <SectionTitle title="Tareas" subtitle="Tareas pendientes" />
+
+                  {tasks.length === 0 ? (
+                    <div className="text-center py-20 flex flex-col items-center">
+                      <Ghost size={48} className="text-[#8C7B70] mb-4 opacity-50" />
+                      <p className="font-mono text-[#8C7B70]">No hay tareas pendientes.</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-4">
+                      {tasks.map(task => (
+                        <GlassCard key={task._id} className="p-4 pl-6 flex items-center justify-between">
+                          <div className="flex items-center gap-6">
+                            <div className="flex flex-col items-center justify-center w-10 h-10 rounded-full bg-[#141210] border border-white/10 shrink-0">
+                              <span className="text-[10px] font-bold text-[#8C7B70]">{(!task.assignedTo || task.assignedTo === currentUser?._id) ? 'TÚ' : 'OT'}</span>
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-[#e5dcd3]">{task.title}</h3>
+                              <span className="font-mono text-xs text-[#ffb38a]">+{task.xpReward} XP</span>
+                            </div>
+                          </div>
+
+                          {(!task.assignedTo || task.assignedTo === currentUser?._id) && (
+                            <button
+                              onClick={() => completeTask(task._id, task.xpReward)}
+                              className="w-12 h-12 rounded-xl bg-[#141210] border border-white/10 hover:border-[#ffb38a] hover:bg-[#ffb38a]/10 flex items-center justify-center text-[#8C7B70] hover:text-[#ffb38a] transition-all group"
+                            >
+                              <Check size={20} className="group-hover:scale-125 transition-transform" />
+                            </button>
+                          )}
+                        </GlassCard>
+                      ))}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => setIsTaskModalOpen(true)}
+                    className="w-full py-4 mt-6 border border-dashed border-[#8C7B70]/50 rounded-[2rem] text-[#8C7B70] hover:text-[#ffb38a] hover:border-[#ffb38a]/50 hover:bg-[#ffb38a]/5 transition-all font-mono tracking-widest text-sm flex items-center justify-center gap-2"
+                  >
+                    + NUEVA TAREA
+                  </button>
+                </div>
+              )}
+
+              {/* PROFILE */}
+              {activeTab === 'profile' && (
+                <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <SectionTitle title="Perfil de Usuario" subtitle="Datos Biométricos" />
+                  <GlassCard className="p-8 text-center">
+                    <div className="w-24 h-24 rounded-full bg-[#ffb38a]/20 border-2 border-[#ffb38a] mx-auto mb-4 flex items-center justify-center">
+                      <User size={40} className="text-[#ffb38a]" />
+                    </div>
+                    <h2 className="text-2xl font-bold mb-1">{currentUser?.alias}</h2>
+                    <p className="font-mono text-[#8C7B70] mb-6">Nivel {Math.floor(userXP / 100) + 1} • {userXP} XP</p>
+                    <button
+                      onClick={() => {
+                        setIsLoggedIn(false);
+                        setCurrentUser(null);
+                        setSelectedHouse(null);
+                        localStorage.removeItem('roommate_user_id');
+                      }}
+                      className="bg-[#141210] border border-red-500/30 text-red-400 hover:bg-red-500/10 px-6 py-2 rounded-lg font-mono text-sm transition-all"
+                    >
+                      DESCONECTAR
+                    </button>
+                  </GlassCard>
+                </div>
+              )}
+            </main>
+          </div>
+        )}
+      </div>
+
+      {/* MODALS */}
+      <GlassModal isOpen={isRuleModalOpen} onClose={() => setIsRuleModalOpen(false)}>
+        <h3 className="text-xl font-bold mb-2">Nueva Directiva</h3>
+        <p className="text-sm text-[#8C7B70] mb-6">Propón una nueva regla para el servidor doméstico.</p>
+        <textarea
+          value={newRuleText}
+          onChange={(e) => setNewRuleText(e.target.value)}
+          placeholder="Ej: Prohibido consumir raciones ajenas..."
+          className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70] min-h-[100px] mb-6 resize-none"
+        />
+        <div className="flex gap-3 justify-end">
+          <button onClick={() => setIsRuleModalOpen(false)} className="px-4 py-2 font-mono text-xs text-[#8C7B70] hover:text-[#e5dcd3]">CANCELAR</button>
+          <button onClick={addRule} className="bg-[#ffb38a] text-[#141210] px-6 py-2 rounded-lg font-bold text-sm">ENVIAR</button>
+        </div>
+      </GlassModal>
+
+      <GlassModal isOpen={billToPay !== null} onClose={() => setBillToPay(null)}>
+        <h3 className="text-xl font-bold mb-2 text-center">Confirmar Transferencia</h3>
+        <p className="text-sm text-[#8C7B70] mb-8 text-center">¿Estas seguro/a?</p>
+        <div className="flex gap-4">
+          <button onClick={() => setBillToPay(null)} className="flex-1 py-3 border border-white/10 rounded-xl font-mono text-sm text-[#8C7B70] hover:text-[#e5dcd3] hover:bg-white/5 transition-all">CANCELAR</button>
+          <button onClick={payBill} className="flex-1 py-3 bg-[#ffb38a] rounded-xl font-bold text-sm text-[#141210] hover:bg-[#ffb38a]/90 transition-all shadow-[0_0_15px_rgba(255,179,138,0.3)]">AUTORIZAR</button>
+        </div>
+      </GlassModal>
+
+      <GlassModal isOpen={isHouseModalOpen} onClose={() => setIsHouseModalOpen(false)}>
+        <h3 className="text-xl font-bold mb-2">Inicializar Servidor</h3>
+        <p className="text-sm text-[#8C7B70] mb-6">Define los parámetros de tu nueva vivienda.</p>
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Nombre de la Base"
+            value={newHouseName}
+            onChange={(e) => setNewHouseName(e.target.value)}
+            className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+          />
+          <input
+            type="text"
+            placeholder="Coordenadas / Dirección (Opcional)"
+            value={newHouseAddress}
+            onChange={(e) => setNewHouseAddress(e.target.value)}
+            className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+          />
+          <div className="flex gap-3 justify-end mt-2">
+            <button onClick={() => setIsHouseModalOpen(false)} className="px-4 py-2 font-mono text-xs text-[#8C7B70] hover:text-[#e5dcd3]">CANCELAR</button>
+            <button onClick={createNewHouse} className="bg-[#ffb38a] text-[#141210] px-6 py-2 rounded-lg font-bold text-sm">CREAR</button>
+          </div>
+        </div>
+      </GlassModal>
+
+      <GlassModal isOpen={isJoinModalOpen} onClose={() => setIsJoinModalOpen(false)}>
+        <div className="bg-[#1a1614] p-8 rounded-3xl max-w-md w-full border border-white/10 flex flex-col gap-4" onClick={e => e.stopPropagation()}>
+          <h2 className="text-2xl font-bold font-sans tracking-tight mb-2">Unirse a Servidor</h2>
+          <input
+            type="text"
+            placeholder="Introduce el código de invitación"
+            value={inviteCode}
+            onChange={(e) => setInviteCode(e.target.value)}
+            className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70] font-mono"
+          />
+          <div className="flex gap-3 justify-end mt-2">
+            <button onClick={() => setIsJoinModalOpen(false)} className="px-4 py-2 font-mono text-xs text-[#8C7B70] hover:text-[#e5dcd3]">CANCELAR</button>
+            <button onClick={handleJoinHouse} className="bg-[#ffb38a] text-[#141210] px-6 py-2 rounded-lg font-bold text-sm">CONECTAR</button>
+          </div>
+        </div>
+      </GlassModal>
+
+      <GlassModal isOpen={isBillModalOpen} onClose={() => setIsBillModalOpen(false)}>
+        <h3 className="text-xl font-bold mb-2">Nueva Cuota Conjunta</h3>
+        <p className="text-sm text-[#8C7B70] mb-6">Añade un nuevo gasto para repartir.</p>
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Concepto (Ej: Enlace Orbital)"
+            value={newBillConcept}
+            onChange={(e) => setNewBillConcept(e.target.value)}
+            className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+          />
+          <input
+            type="number"
+            placeholder="Total €"
+            value={newBillTotal}
+            onChange={(e) => setNewBillTotal(e.target.value)}
+            className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+          />
+          <div className="flex gap-3 justify-end mt-2">
+            <button onClick={() => setIsBillModalOpen(false)} className="px-4 py-2 font-mono text-xs text-[#8C7B70] hover:text-[#e5dcd3]">CANCELAR</button>
+            <button onClick={addNewBill} className="bg-[#ffb38a] text-[#141210] px-6 py-2 rounded-lg font-bold text-sm">AÑADIR GASTO</button>
+          </div>
+        </div>
+      </GlassModal>
+
+      <GlassModal isOpen={isTaskModalOpen} onClose={() => setIsTaskModalOpen(false)}>
+        <h3 className="text-xl font-bold mb-2">Nueva Tarea</h3>
+        <p className="text-sm text-[#8C7B70] mb-6">Asigna una nueva tarea de mantenimiento.</p>
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Título de la Tarea"
+            value={newTaskTitle}
+            onChange={(e) => setNewTaskTitle(e.target.value)}
+            className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+          />
+          <input
+            type="number"
+            placeholder="Recompensa (XP)"
+            value={newTaskXP}
+            onChange={(e) => setNewTaskXP(e.target.value)}
+            className="w-full bg-[#141210]/60 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#ffb38a]/50 transition-colors placeholder:text-[#8C7B70]"
+          />
+          <div className="flex gap-3 justify-end mt-2">
+            <button onClick={() => setIsTaskModalOpen(false)} className="px-4 py-2 font-mono text-xs text-[#8C7B70] hover:text-[#e5dcd3]">CANCELAR</button>
+            <button onClick={addNewTask} className="bg-[#ffb38a] text-[#141210] px-6 py-2 rounded-lg font-bold text-sm">CREAR TAREA</button>
+          </div>
+        </div>
+      </GlassModal>
+
+      {/* TOASTS */}
+      <ToastNotification toast={toast} />
     </div>
   );
 }
