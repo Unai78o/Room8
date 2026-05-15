@@ -1,15 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  webpack: (config) => {
-    if (process.env.WATCHPACK_POLLING) {
-      config.watchOptions = {
-        poll: 1000,
-        aggregateTimeout: 300,
-      };
-    }
-    return config;
-  },
+  // Turbopack is enabled by default in development.
+  // The CHOKIDAR_USEPOLLING environment variable in docker-compose
+  // handles file watching polling if needed.
 };
 
 export default nextConfig;
