@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   // Turbopack is enabled by default in development.
   // The CHOKIDAR_USEPOLLING environment variable in docker-compose
   // handles file watching polling if needed.
+  turbopack: {},
 };
 
 export default nextConfig;
